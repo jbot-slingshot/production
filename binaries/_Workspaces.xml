@@ -6,7 +6,7 @@
   </OpenWorkspaces>
   <ActiveWorkspace>Main</ActiveWorkspace>
   <ControlCenter>
-    <WindowState>Normal</WindowState>
+    <WindowState>Maximized</WindowState>
     <Location>100;27</Location>
     <Size>900;600</Size>
     <Topmost>False</Topmost>
@@ -104,6 +104,9 @@
               <GridCustomizations>&lt;xamDataPresenter version="25.1.20251.22" formatVersion="2.1"&gt;
   &lt;fieldLayouts&gt;
     &lt;fieldLayout key="ExecutionGridEntry" orientation="Vertical" fieldList="Instrument, Action, Quantity, Price, Time;DateTime, Id, EntryExit, Position, OrderId, Name, Commission, Rate, LotSize, Account, AccountName, Connection"&gt;
+      &lt;sortedFields&gt;
+        &lt;sortedField extendedInfo="Time;DateTime" direction="Ascending" fieldName="Time" FieldId="4" isGroupBy="false" /&gt;
+      &lt;/sortedFields&gt;
       &lt;fields&gt;
         &lt;field id="0" name="Instrument" extendedInfo="Instrument" cellWidth="6" labelWidth="6" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" /&gt;
         &lt;field id="1" name="Action" extendedInfo="Action" cellWidth="6" labelWidth="6" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" /&gt;
@@ -185,6 +188,27 @@
         &lt;field id="14" name="Connection" extendedInfo="Connection" cellWidth="6" labelWidth="6" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" /&gt;
         &lt;field id="15" name="Workspace" extendedInfo="Workspace" Visibility="Collapsed" IgnoreFieldVisibilityOverrides="false" /&gt;
         &lt;field id="16" name="IsEnabled" extendedInfo="IsEnabled;String;unbound;{IsEnabled}" cellWidth="6" labelWidth="6" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" /&gt;
+      &lt;/fields&gt;
+    &lt;/fieldLayout&gt;
+    &lt;fieldLayout parentFieldName="Children" key="ChildLayout" orientation="Vertical" fieldList="Name, InstrumentName, DataSeries, Parameters, Position2String, AccountPosition2String, Sync, AveragePrice;Double, Unrealized, Realized, NumberOfTrades;Int32, Account, AccountName, Connection, Workspace, IsEnabled;String;unbound"&gt;
+      &lt;parentFieldLayout key="ParentLayout" fieldList="Children;ObservableCollection`1, Name, InstrumentName, DataSeries, Parameters, Position2String, AccountPosition2String, Sync, AveragePrice;Double, Unrealized, Realized, NumberOfTrades;Int32, Account, AccountName, Connection, Workspace, IsEnabled;String;unbound;{IsEnabled}" /&gt;
+      &lt;fields&gt;
+        &lt;field id="0" name="Name" extendedInfo="Name" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="1" name="InstrumentName" extendedInfo="InstrumentName" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="2" name="DataSeries" extendedInfo="DataSeries" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="3" name="Parameters" extendedInfo="Parameters" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="4" name="Position2String" extendedInfo="Position2String" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="5" name="AccountPosition2String" extendedInfo="AccountPosition2String" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="6" name="Sync" extendedInfo="Sync" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="7" name="AveragePrice" extendedInfo="AveragePrice;Double" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="8" name="Unrealized" extendedInfo="Unrealized" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="9" name="Realized" extendedInfo="Realized" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="10" name="NumberOfTrades" extendedInfo="NumberOfTrades;Int32" Visibility="Collapsed" IgnoreFieldVisibilityOverrides="false" /&gt;
+        &lt;field id="11" name="Account" extendedInfo="Account" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="12" name="AccountName" extendedInfo="AccountName" Visibility="Collapsed" IgnoreFieldVisibilityOverrides="false" /&gt;
+        &lt;field id="13" name="Connection" extendedInfo="Connection" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
+        &lt;field id="14" name="Workspace" extendedInfo="Workspace" Visibility="Collapsed" IgnoreFieldVisibilityOverrides="false" /&gt;
+        &lt;field id="15" name="IsEnabled" extendedInfo="IsEnabled;String;unbound" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" cellWidth="6" labelWidth="0" /&gt;
       &lt;/fields&gt;
     &lt;/fieldLayout&gt;
   &lt;/fieldLayouts&gt;
