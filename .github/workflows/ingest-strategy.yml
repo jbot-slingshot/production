@@ -1,29 +1,7 @@
-name: Ingest Strategy Zip
-
-on:
-  repository_dispatch:
-    types: [strategy-update]
-  workflow_dispatch:
-
-jobs:
-  ingest:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install deps
-        run: pip install google-api-python-client google-auth
-
-      - name: Download zip from Drive
+- name: Download latest zip from Drive folder
         env:
           GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
+          DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
         run: |
           python <<'EOF'
           import os, json
@@ -36,54 +14,28 @@ jobs:
               scopes=['https://www.googleapis.com/auth/drive.readonly']
           )
           service = build('drive', 'v3', credentials=creds)
-          file_id = '1zBFX9w2oS2OXzr25Ogg3Oy5VJyVUy-GT'
-          request = service.files().get_media(fileId=file_id)
+
+          folder_id = os.environ['DRIVE_FOLDER_ID']
+
+          # Find the most recent .zip in the folder
+          results = service.files().list(
+              q=f"'{folder_id}' in parents and mimeType='application/zip' and trashed=false",
+              orderBy='modifiedTime desc',
+              pageSize=1,
+              fields='files(id, name, modifiedTime)'
+          ).execute()
+
+          files = results.get('files', [])
+          if not files:
+              raise SystemExit('No zip files found in the shared folder')
+
+          target = files[0]
+          print(f"Downloading {target['name']} (modified {target['modifiedTime']})")
+
+          request = service.files().get_media(fileId=target['id'])
           with open('slingshotNQ.zip', 'wb') as f:
               downloader = MediaIoBaseDownload(f, request)
               done = False
               while not done:
                   _, done = downloader.next_chunk()
           EOF
-
-      - name: Prepare strategy folder
-        run: |
-          mkdir -p strategy
-          rm -f strategy/*.cs strategy/*.dll strategy/slingshotNQ.zip
-
-      - name: Place zip and extract .cs/.dll
-        run: |
-          cp slingshotNQ.zip strategy/
-          # Extract only .cs and .dll, flatten paths, refuse anything sketchy
-          python <<'EOF'
-          import zipfile, os, sys
-          from pathlib import Path
-
-          target = Path('strategy')
-          allowed_ext = {'.cs', '.dll'}
-
-          with zipfile.ZipFile('slingshotNQ.zip') as z:
-              for info in z.infolist():
-                  if info.is_dir():
-                      continue
-                  name = Path(info.filename).name  # flatten - take basename only
-                  ext = Path(name).suffix.lower()
-                  if ext not in allowed_ext:
-                      print(f'Skipping {info.filename} (extension not allowed)')
-                      continue
-                  if not name or name.startswith('.'):
-                      print(f'Skipping {info.filename} (suspicious name)')
-                      continue
-                  out_path = target / name
-                  with z.open(info) as src, open(out_path, 'wb') as dst:
-                      dst.write(src.read())
-                  print(f'Extracted {name}')
-          EOF
-          rm slingshotNQ.zip
-
-      - name: Commit and push
-        run: |
-          git config user.name "strategy-bot"
-          git config user.email "strategy-bot@users.noreply.github.com"
-          git add strategy/
-          git diff --staged --quiet || git commit -m "Update strategy from Drive"
-          git push
