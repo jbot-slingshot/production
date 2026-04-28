@@ -1,0 +1,60 @@
+name: Ingest Strategy Zip
+
+on:
+  repository_dispatch:
+    types: [strategy-update]
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install google-api-python-client google-auth
+
+      - name: Download zip from Drive
+        env:
+          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
+          DRIVE_FILE_ID: ${{ secrets.DRIVE_FILE_ID }}
+        run: |
+          python <<'EOF'
+          import os, json, io
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+          from googleapiclient.http import MediaIoBaseDownload
+
+          creds = service_account.Credentials.from_service_account_info(
+              json.loads(os.environ['GDRIVE_SA_KEY']),
+              scopes=['https://www.googleapis.com/auth/drive.readonly']
+          )
+          service = build('drive', 'v3', credentials=creds)
+          request = service.files().get_media(fileId=os.environ['DRIVE_FILE_ID'])
+          with open('strategy.zip', 'wb') as f:
+              downloader = MediaIoBaseDownload(f, request)
+              done = False
+              while not done:
+                  _, done = downloader.next_chunk()
+          EOF
+
+      - name: Unzip into target folder
+        run: |
+          rm -rf strategy/
+          mkdir -p strategy/
+          unzip -o strategy.zip -d strategy/
+          rm strategy.zip
+
+      - name: Commit and push
+        run: |
+          git config user.name "strategy-bot"
+          git config user.email "strategy-bot@users.noreply.github.com"
+          git add strategy/
+          git diff --staged --quiet || git commit -m "Update strategy from Drive"
+          git push
